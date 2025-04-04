@@ -37,4 +37,16 @@ class Tableau extends Model
     {
         return $this->belongsTo(Painter::class, 'user_id');
     }
+
+    public function images()
+    {
+        return $this->hasMany(TableauImage::class);
+    }
+
+    public function primaryImage()
+    {
+        return $this->hasOne(TableauImage::class)->where('is_primary', true)->withDefault([
+            'image_path' => $this->image 
+        ]);
+    }
 }

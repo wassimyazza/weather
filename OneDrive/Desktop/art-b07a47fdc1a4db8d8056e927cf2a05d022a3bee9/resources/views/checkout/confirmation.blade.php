@@ -33,7 +33,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <span class="font-jost text-sm font-medium text-muted-gray">Total</span>
-                        <span class="font-jost text-sm font-bold text-deep-blue">{{ number_format($reservation->total_price, 2) }} MAD</span>
+                        <span class="font-jost text-sm font-bold text-deep-blue">{{ number_format($reservation->total_price, 2) }} EURO</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <span class="font-jost text-sm font-medium text-muted-gray">Statut</span>

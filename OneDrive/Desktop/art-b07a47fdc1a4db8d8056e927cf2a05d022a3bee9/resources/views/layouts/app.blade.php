@@ -242,7 +242,7 @@ function updateCartDropdown(cartData) {
         for (const [id, details] of Object.entries(cartItems)) {
             cartHtml += `
                 <li class="flex items-center py-3 border-b border-gray-200">
-                    <img src="/storage/${details.image}" alt="${details.title}" class="w-16 h-16 object-cover rounded mr-4">
+                    <img src="/${details.image}" alt="${details.title}" class="w-16 h-16 object-cover rounded mr-4">
                     <div class="flex-grow">
                         <h6 class="font-semibold text-gray-800">${details.title.length > 20 ? details.title.substring(0, 20) + '...' : details.title}</h6>
                         <p class="text-sm text-gray-600">Quantité: ${details.quantity}</p>
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
 
             const productId = this.dataset.id;
-            const productName = this.closest('.bg-white').querySelector('h3').textContent;
+            const productName = "this.closest('.bg-white').querySelector('h3').textContent";
 
             fetch(`/cart/add/${productId}`, {
                 method: 'POST',

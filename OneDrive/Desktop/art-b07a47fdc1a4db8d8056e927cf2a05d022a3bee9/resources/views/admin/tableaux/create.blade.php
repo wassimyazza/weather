@@ -25,10 +25,10 @@
             </div>
 
             <div>
-                <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Prix (MAD) <span class="text-rose-500">*</span></label>
+                <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Prix (EURO) <span class="text-rose-500">*</span></label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="text-gray-500 sm:text-sm">MAD</span>
+                        <span class="text-gray-500 sm:text-sm">EURO</span>
                     </div>
                     <input type="number" id="price" name="price" value="{{ old('price') }}" step="0.01" min="0"
                            class="w-full pl-16 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('price') border-red-500 @enderror"
@@ -101,22 +101,26 @@
         </div>
 
         <div class="mb-6">
-            <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Image <span class="text-rose-500">*</span></label>
+            <label for="images" class="block text-sm font-medium text-gray-700 mb-2">Images <span class="text-rose-500">*</span></label>
             <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
                 <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <div class="mt-4 text-center">
-                    <label for="image" class="cursor-pointer bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Choisir une image
+                    <label for="images" class="cursor-pointer bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Choisir des images
                     </label>
-                    <input type="file" id="image" name="image" accept="image/*" class="hidden" required>
+                    <input type="file" id="images" name="images[]" accept="image/*" class="hidden" multiple required>
                 </div>
                 <p class="mt-1 text-xs text-gray-500">PNG, JPG, GIF jusqu'à 2MB</p>
-                <p id="file-name" class="mt-2 text-sm text-gray-600"></p>
+                <p class="text-xs text-gray-500">La première image sera l'image principale</p>
+                <p id="files-count" class="mt-2 text-sm text-gray-600"></p>
             </div>
-            <div id="file-preview"></div>
-            @error('image')
+            <div id="file-preview" class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+            @error('images')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+            @error('images.*')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
@@ -144,23 +148,40 @@
 </div>
 
 <script>
-    // Display selected file name and image preview
-    document.getElementById('image').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const fileNameDisplay = document.getElementById('file-name');
+    // Display selected files and image previews
+    document.getElementById('images').addEventListener('change', function(e) {
+        const files = e.target.files;
+        const filesCountDisplay = document.getElementById('files-count');
         const previewContainer = document.getElementById('file-preview');
-
-        if (file) {
-            fileNameDisplay.textContent = `Fichier sélectionné: ${file.name}`;
+        
+        previewContainer.innerHTML = '';
+        
+        if (files.length > 0) {
+            filesCountDisplay.textContent = `${files.length} fichier(s) sélectionné(s)`;
             
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                previewContainer.innerHTML = `<img src="${event.target.result}" alt="Preview" class="mt-4 max-w-xs rounded shadow">`;
-            };
-            reader.readAsDataURL(file);
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function (event) {
+                    const preview = document.createElement('div');
+                    preview.className = 'relative';
+                    preview.innerHTML = `
+                        <div class="relative group border rounded-lg overflow-hidden shadow-sm">
+                            <img src="${event.target.result}" alt="Preview" class="w-full h-32 object-cover">
+                            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="text-white text-xs font-medium">${file.name}</span>
+                            </div>
+                            ${i === 0 ? '<div class="absolute top-2 right-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full">Principal</div>' : ''}
+                        </div>
+                    `;
+                    previewContainer.appendChild(preview);
+                };
+                
+                reader.readAsDataURL(file);
+            }
         } else {
-            fileNameDisplay.textContent = '';
-            previewContainer.innerHTML = '';
+            filesCountDisplay.textContent = '';
         }
     });
 </script>

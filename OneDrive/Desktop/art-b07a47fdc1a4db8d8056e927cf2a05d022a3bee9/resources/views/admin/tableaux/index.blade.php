@@ -60,7 +60,7 @@
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">{{ number_format($tableau->price, 2) }} MAD</div>
+                        <div class="text-sm font-medium text-gray-900">{{ number_format($tableau->price, 2) }} EURO</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex items-center space-x-3">
@@ -141,7 +141,7 @@
                 </div>
                 <div>
                     <div class="text-sm font-medium text-emerald-800">Valeur Totale</div>
-                    <div class="text-2xl font-bold text-emerald-900">{{ number_format($tableaux->sum('price'), 2) }} MAD</div>
+                    <div class="text-2xl font-bold text-emerald-900">{{ number_format($tableaux->sum('price'), 2) }} EURO</div>
                 </div>
             </div>
         </div>

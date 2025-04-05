@@ -31,7 +31,7 @@
                         <div class="text-sm text-gray-500">{{ $order->customer_phone }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap font-medium">
-                        <span class="text-indigo-800">{{ number_format($order->total_price, 2) }} MAD</span>
+                        <span class="text-indigo-800">{{ number_format($order->total_price, 2) }} EURO</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="inline">

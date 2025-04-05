@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PainterController;
+use App\Http\Controllers\TableauController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomOrderController;
 use App\Http\Controllers\Admin\AdminAuthController;
@@ -18,6 +19,9 @@ use App\Http\Controllers\Admin\AdminCustomOrderController;
 // Front-end routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/custom-order', [CustomOrderController::class, 'showForm'])->name('custom-order');
+
+// Tableau routes
+Route::get('/tableaux/{tableau}', [TableauController::class, 'show'])->name('tableaux.show');
 
 // Painter routes
 Route::get('/artists', [PainterController::class, 'index'])->name('painters.all');
@@ -53,6 +57,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('tableaux', AdminTableauController::class)->parameters([
             'tableaux' => 'tableau'
         ]);
+        
+        // Tableau images management
+        Route::delete('tableaux/images/{image}', [AdminTableauController::class, 'deleteImage'])->name('tableaux.images.delete');
+        Route::post('tableaux/images/{image}/primary', [AdminTableauController::class, 'setPrimaryImage'])->name('tableaux.images.primary');
         
         // Categories management
         Route::resource('categories', AdminCategoryController::class);

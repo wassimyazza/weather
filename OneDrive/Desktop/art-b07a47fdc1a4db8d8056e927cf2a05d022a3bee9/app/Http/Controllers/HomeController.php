@@ -11,7 +11,7 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Tableau::with('category')
+        $query = Tableau::with(['category', 'images'])
                         ->whereNull('user_id'); // Only get tableaux without a painter
 
         // Search filter
@@ -50,7 +50,7 @@ class HomeController extends Controller
             // For each painter, check if they have tableaux
             $painter->load(['tableaux' => function ($query) {
                 $query->take(3); // Only get up to 3 tableaux
-            }]);
+            }, 'tableaux.images']); // Also load images for each tableau
             
             // If this painter has at least one tableau, return them
             if ($painter->tableaux->count() > 0) {

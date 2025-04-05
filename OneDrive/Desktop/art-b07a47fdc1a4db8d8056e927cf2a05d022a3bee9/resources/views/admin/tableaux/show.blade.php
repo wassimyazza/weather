@@ -23,13 +23,26 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="md:col-span-1">
             <div class="bg-gray-50 p-6 rounded-lg border border-gray-100 flex flex-col items-center">
+                <!-- Main Image -->
                 <div class="w-full h-64 rounded-lg overflow-hidden mb-4 border border-gray-200">
-                    <img src="{{ asset($tableau->image) }}" alt="{{ $tableau->title }}" class="w-full h-full object-cover">
+                    <img id="main-image" src="{{ asset($tableau->primaryImage ? $tableau->primaryImage->image_path : $tableau->image) }}" alt="{{ $tableau->title }}" class="w-full h-full object-cover">
                 </div>
+                
+                <!-- Thumbnail Gallery -->
+                @if($tableau->images && $tableau->images->count() > 0)
+                <div class="w-full grid grid-cols-4 gap-2 mb-4">
+                    @foreach($tableau->images as $image)
+                        <div class="cursor-pointer rounded-lg overflow-hidden border {{ $image->is_primary ? 'border-amber-500' : 'border-gray-200' }}" onclick="changeMainImage('{{ asset($image->image_path) }}')">
+                            <img src="{{ asset($image->image_path) }}" alt="{{ $tableau->title }}" class="w-full h-16 object-cover">
+                        </div>
+                    @endforeach
+                </div>
+                @endif
+                
                 <div class="w-full space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-500">Prix:</span>
-                        <span class="font-semibold text-gray-900">{{ number_format($tableau->price, 2) }} MAD</span>
+                        <span class="font-semibold text-gray-900">{{ number_format($tableau->price, 2) }} EURO</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-500">Catégorie:</span>
@@ -118,4 +131,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    function changeMainImage(src) {
+        document.getElementById('main-image').src = src;
+    }
+</script>
 @endsection

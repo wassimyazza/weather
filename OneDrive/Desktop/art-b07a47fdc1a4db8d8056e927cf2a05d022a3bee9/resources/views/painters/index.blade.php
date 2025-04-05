@@ -85,57 +85,73 @@
                         <div class="h-px bg-gray-200 flex-grow"></div>
                     </div>
                     
-                    @if($painter->tableaux->count() > 0)
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            @foreach($painter->tableaux as $tableau)
-                                <div class="group bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-xl hover:translate-y-[-5px] duration-300">
-                                    <!-- Image Container with Overlay -->
-                                    <div class="relative h-64 bg-gray-100 overflow-hidden">
-                                        <img 
-                                            src="{{ asset($tableau->image) }}" 
-                                            alt="{{ $tableau->title }}"
-                                            class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
-                                            onerror="this.src='https://placehold.co/600x400?text={{ urlencode($tableau->title) }}'"
-                                        >
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                    </div>
-                                    
-                                    <!-- Content -->
-                                    <div class="p-6">
-                                        <h3 class="font-amiri text-xl font-semibold text-deep-blue mb-2 group-hover:text-rich-gold transition-colors">{{ $tableau->title }}</h3>
-                                        <p class="font-jost text-gray-600 mb-4">{{ Str::limit($tableau->description, 70) }}</p>
-                                        
-                                        <div class="flex justify-between items-center">
-                                            <span class="font-jost text-xl font-bold text-deep-blue">{{ number_format($tableau->price, 2) }} MAD</span>
-                                            <button 
-                                                type="button"
-                                                class="add-to-cart bg-rich-gold text-white px-4 py-2 rounded-md hover:bg-amber-600 transition-all flex items-center gap-2"
-                                                data-id="{{ $tableau->id }}"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                </svg>
-                                                Ajouter
-                                            </button>
-                                        </div>
-                                        
-                                        @if(isset($tableau->category))
-                                            <span class="inline-block bg-gray-100 text-muted-gray text-sm px-3 py-1 rounded-full mt-4 font-jost">
-                                                {{ $tableau->category->name }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="bg-gray-50 rounded-xl p-12 text-center border border-gray-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                            </svg>
-                            <p class="font-jost text-lg text-muted-gray">Aucune œuvre disponible pour cet artiste pour le moment.</p>
-                        </div>
-                    @endif
+                    <!-- Tableau Grid for Painters Page (index.blade.php) -->
+<!-- Replace the tableaux section in each painter's section with this -->
+
+@if($painter->tableaux->count() > 0)
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @foreach($painter->tableaux as $tableau)
+        <div class="group bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-xl hover:translate-y-[-5px] duration-300">
+            <!-- Image Container with Overlay -->
+            <a href="{{ route('tableaux.show', $tableau) }}" class="block relative h-64 bg-gray-100 overflow-hidden">
+                <img 
+                    src="{{ asset($tableau->primaryImage ? $tableau->primaryImage->image_path : $tableau->image) }}" 
+                    alt="{{ $tableau->title }}"
+                    class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+                    onerror="this.src='https://placehold.co/600x400?text={{ urlencode($tableau->title) }}'">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <!-- Image counter badge if there are multiple images -->
+                @if($tableau->images && $tableau->images->count() > 1)
+                    <div class="absolute bottom-3 right-3 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-md flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {{ $tableau->images->count() }}
+                    </div>
+                @endif
+            </a>
+            
+            <!-- Content -->
+            <div class="p-6">
+                <a href="{{ route('tableaux.show', $tableau) }}" class="block">
+                    <h3 class="font-amiri text-xl font-semibold text-deep-blue mb-2 group-hover:text-rich-gold transition-colors">
+                        {{ $tableau->title }}
+                    </h3>
+                </a>
+                <p class="font-jost text-gray-600 mb-4">{{ Str::limit($tableau->description, 70) }}</p>
+                
+                <div class="flex justify-between items-center">
+                    <span class="font-jost text-xl font-bold text-deep-blue">{{ number_format($tableau->price, 2) }} EURO</span>
+                    <button 
+                        type="button"
+                        class="add-to-cart bg-rich-gold text-white px-4 py-2 rounded-md hover:bg-amber-600 transition-all flex items-center gap-2"
+                        data-id="{{ $tableau->id }}"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Ajouter
+                    </button>
+                </div>
+                
+                @if(isset($tableau->category))
+                    <span class="inline-block bg-gray-100 text-muted-gray text-sm px-3 py-1 rounded-full mt-4 font-jost">
+                        {{ $tableau->category->name }}
+                    </span>
+                @endif
+            </div>
+        </div>
+    @endforeach
+</div>
+@else
+<div class="bg-gray-50 rounded-xl p-12 text-center border border-gray-100">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+    </svg>
+    <p class="font-jost text-lg text-muted-gray">Aucune œuvre disponible pour cet artiste pour le moment.</p>
+</div>
+@endif
                 </div>
             </section>
         @empty

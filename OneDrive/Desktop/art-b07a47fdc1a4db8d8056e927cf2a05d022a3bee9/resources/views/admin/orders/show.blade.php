@@ -61,7 +61,7 @@
                     </div>
                     <div class="flex justify-between items-center font-bold">
                         <span class="text-sm text-gray-500">Total:</span>
-                        <span class="text-indigo-700">{{ number_format($order->total_price, 2) }} MAD</span>
+                        <span class="text-indigo-700">{{ number_format($order->total_price, 2) }} EURO</span>
                     </div>
                 </div>
 
@@ -112,7 +112,7 @@
                                         <div class="text-xs text-gray-500">{{ Str::limit($tableau->description, 100) }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="text-sm font-semibold text-indigo-700">{{ number_format($tableau->price, 2) }} MAD</span>
+                                        <span class="text-sm font-semibold text-indigo-700">{{ number_format($tableau->price, 2) }} EURO</span>
                                     </td>
                                 </tr>
                                 @endforeach

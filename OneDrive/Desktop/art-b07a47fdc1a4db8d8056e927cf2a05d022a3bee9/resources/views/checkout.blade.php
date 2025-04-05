@@ -51,16 +51,16 @@
                     <h2 class="font-amiri text-xl font-semibold text-deep-blue mb-6">Résumé de la Commande</h2>
                     <div class="flex justify-between mb-3">
                         <span class="font-jost text-muted-gray">Sous-total</span>
-                        <span class="font-jost font-semibold text-gray-800">{{ number_format($total, 2) }} MAD</span>
+                        <span class="font-jost font-semibold text-gray-800">{{ number_format($total, 2) }} EURO</span>
                     </div>
                     <div class="flex justify-between mb-3">
                         <span class="font-jost text-muted-gray">Livraison</span>
-                        <span class="font-jost font-semibold text-gray-800">50.00 MAD</span>
+                        <span class="font-jost font-semibold text-gray-800">50.00 EURO</span>
                     </div>
                     <div class="border-t border-gray-200 pt-4 mt-4">
                         <div class="flex justify-between text-xl font-bold text-deep-blue">
                             <span class="font-jost">Total</span>
-                            <span class="font-jost">{{ number_format($total + 50, 2) }} MAD</span>
+                            <span class="font-jost">{{ number_format($total + 50, 2) }} EURO</span>
                         </div>
                     </div>
                 </div>

@@ -49,4 +49,6 @@ class Tableau extends Model
             'image_path' => $this->image 
         ]);
     }
+
+    
 }

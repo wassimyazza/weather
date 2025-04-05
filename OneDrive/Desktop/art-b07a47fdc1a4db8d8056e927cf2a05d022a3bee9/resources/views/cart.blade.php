@@ -41,7 +41,7 @@
                                 </div>
                                 <div>
                                     <h3 class="font-semibold text-deep-blue">{{ $item['title'] }}</h3>
-                                    <p class="text-muted-gray">{{ number_format($item['price'], 2) }} MAD</p>
+                                    <p class="text-muted-gray">{{ number_format($item['price'], 2) }} EURO</p>
                                 </div>
                             </div>
                             <div class="flex items-center">
@@ -79,15 +79,15 @@
                 <div class="mt-8 py-4 border-t border-gray-200">
                     <div class="flex justify-between font-semibold text-gray-800 mb-3">
                         <span>Sous-total</span>
-                        <span>{{ number_format($total, 2) }} MAD</span>
+                        <span>{{ number_format($total, 2) }} EURO</span>
                     </div>
                     <div class="flex justify-between font-semibold text-gray-800 mb-3">
                         <span>Livraison</span>
-                        <span>50.00 MAD</span>
+                        <span>50.00 EURO</span>
                     </div>
                     <div class="flex justify-between text-xl font-bold text-deep-blue">
                         <span>Total</span>
-                        <span>{{ number_format($total + 50, 2) }} MAD</span>
+                        <span>{{ number_format($total + 50, 2) }} EURO</span>
                     </div>
                     <a href="{{ route('checkout') }}" class="block bg-rich-gold text-white font-semibold py-3 px-6 rounded-full mt-6 hover:bg-light-gold transition-all text-center">
                         Procéder au Paiement

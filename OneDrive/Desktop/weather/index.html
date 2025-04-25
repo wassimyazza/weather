@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Météo App | Prévisions en temps réel</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #0077b6;
+      --secondary: #0096c7;
+      --accent: #ef476f;
+      --text-dark: #222222;
+      --text-light: #6c757d;
+      --white: #ffffff;
+      --bg-light: #f8f9fa;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header styles */
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      padding: 32px 0;
+      border-radius: 0 0 20px 20px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .app-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    
+    .app-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      opacity: 0.9;
+      margin: 8px 0 24px 0;
+    }
+    
+    .search-container {
+      display: flex;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 50px;
+      padding: 4px;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--white);
+      padding: 12px 16px;
+      font-size: 16px;
+      border-radius: 50px 0 0 50px;
+    }
+    
+    .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .search-input:focus {
+      outline: none;
+    }
+    
+    .search-button {
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .search-button:hover {
+      background: #e02c58;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(239, 71, 111, 0.4);
+    }
+    
+    /* Cards */
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 24px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+      color: var(--primary);
+    }
+    
+    .card-body {
+      padding: 24px;
+    }
+    
+    /* Current weather */
+    .current-weather-card {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+    }
+    
+    .current-weather-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .current-weather-title {
+      color: var(--white);
+    }
+    
+    .temperature {
+      font-size: 64px;
+      font-weight: 700;
+      line-height: 1;
+      margin: 16px 0;
+    }
+    
+    .weather-desc {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      text-transform: capitalize;
+    }
+    
+    .feels-like {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    
+    /* Weather details grid */
+    .weather-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+    
+    @media (min-width: 768px) {
+      .weather-details {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .detail-item {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      backdrop-filter: blur(5px);
+    }
+    
+    .detail-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .detail-value {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 4px 0;
+    }
+    
+    .detail-label {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    
+    /* Forecast sections */
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 24px 0 16px 0;
+      color: var(--primary);
+    }
+    
+    /* Hourly forecast */
+    .hourly-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 16px;
+    }
+    
+    @media (min-width: 640px) {
+      .hourly-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .hourly-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hourly-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--secondary);
+    }
+    
+    .hour-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    
+    .hourly-icon {
+      font-size: 40px;
+      margin: 12px 0;
+    }
+    
+    .hourly-temp {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 12px 0 8px 0;
+    }
+    
+    .hourly-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      text-transform: capitalize;
+    }
+    
+    /* Daily forecast */
+    .daily-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 16px;
+    }
+    
+    @media (min-width: 640px) {
+      .daily-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .daily-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .daily-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+    
+    .daily-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .daily-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 4px;
+      background: var(--primary);
+    }
+    
+    .day-label {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    
+    .daily-icon {
+      font-size: 32px;
+      margin: 12px 0;
+    }
+    
+    .daily-temp {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 12px 0 8px 0;
+    }
+    
+    .daily-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      text-transform: capitalize;
+      margin-bottom: 12px;
+    }
+    
+    .daily-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-light);
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      padding-top: 12px;
+      margin-top: 12px;
+    }
+    
+    .daily-details i {
+      margin-right: 4px;
+      color: var(--primary);
+    }
+    
+    /* Location header */
+    .location-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .city-name {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text-dark);
+    }
+    
+    .current-date {
+      font-size: 16px;
+      color: var(--text-light);
+      margin-top: 8px;
+    }
+    
+    /* Error message */
+    .error-message {
+      background: #fee;
+      border-left: 4px solid #ef5350;
+      color: #c62828;
+      padding: 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 10px rgba(239, 83, 80, 0.1);
+    }
+    
+    .error-icon {
+      font-size: 24px;
+      margin-right: 16px;
+      color: #ef5350;
+    }
+    
+    .error-title {
+      font-weight: 600;
+      margin: 0 0 4px 0;
+    }
+    
+    .error-text {
+      margin: 0;
+    }
+    
+    /* Footer */
+    .footer {
+      background: #333;
+      color: var(--white);
+      padding: 24px 0;
+      margin-top: 24px;
+    }
+    
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    @media (min-width: 768px) {
+      .footer-content {
+        flex-direction: row;
+      }
+    }
+    
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    @media (min-width: 768px) {
+      .footer-logo {
+        margin-bottom: 0;
+      }
+    }
+    
+    .footer-icon {
+      font-size: 24px;
+      margin-right: 8px;
+    }
+    
+    .footer-text {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Search -->
+  <header class="header">
+    <div class="container">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="app-title"><i class="fas fa-cloud-sun mr-2"></i>Météo App</h1>
+      </div>
+      
+      <div class="text-center">
+        <h2 class="app-subtitle">Prévisions météo en temps réel</h2>
+        
+        <div class="search-container mb-2">
+          <input
+            type="text"
+            id="cityInput"
+            placeholder="Rechercher une ville..."
+            class="search-input"
+          >
+          <button
+            id="searchButton"
+            class="search-button"
+          >
+            <i class="fas fa-search mr-2"></i>Rechercher
+          </button>
+        </div>
+        
+        <!-- Message d'erreur sous la barre de recherche -->
+        <div id="searchError" class="hidden mt-3 mx-auto max-w-md text-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md">
+          <i class="fas fa-exclamation-circle mr-2"></i>
+          <span class="search-error-message">Ville introuvable. Vérifiez l'orthographe ou essayez une autre ville.</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Error Message -->
+    <div id="errorMessage" class="hidden error-message">
+      <div class="error-icon">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      <div>
+        <h3 class="error-title">Ville introuvable</h3>
+        <p class="error-text">Veuillez vérifier l'orthographe du nom de la ville et réessayer.</p>
+      </div>
+    </div>
+    
+    <!-- Weather Results -->
+    <div id="weatherResults" class="hidden">
+      <!-- Location and Date Header -->
+      <div class="location-header">
+        <h2 id="cityName" class="city-name"></h2>
+        <p id="currentDate" class="current-date"></p>
+      </div>
+      
+      <!-- Current Weather Card -->
+      <div class="card current-weather-card fade-in">
+        <div class="card-header current-weather-header">
+          <h3 class="card-title current-weather-title">Conditions actuelles</h3>
+        </div>
+        
+        <div class="card-body">
+          <div class="flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center mb-6 md:mb-0">
+              <div id="weatherIcon" class="text-6xl mr-6"></div>
+              <div>
+                <div id="temperature" class="temperature"></div>
+                <div class="flex items-center">
+                  <img id="weatherIconImg" src="" alt="Icône météo" class="w-12 h-12 mr-2">
+                  <div id="weatherDescription" class="weather-desc"></div>
+                </div>
+                <div class="feels-like">Ressenti: <span id="feelsLike"></span></div>
+              </div>
+            </div>
+            
+            <div class="weather-details">
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-tint"></i></div>
+                <div id="humidity" class="detail-value"></div>
+                <div class="detail-label">Humidité</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-wind"></i></div>
+                <div id="wind" class="detail-value"></div>
+                <div class="detail-label">Vent</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-compress-alt"></i></div>
+                <div id="pressure" class="detail-value"></div>
+                <div class="detail-label">Pression</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-eye"></i></div>
+                <div id="visibility" class="detail-value"></div>
+                <div class="detail-label">Visibilité</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hourly Forecast Section -->
+      <h3 class="section-title">Prévisions pour les 3 prochaines heures</h3>
+      <div id="hourlyForecast" class="hourly-grid fade-in">
+        <!-- Hourly forecast cards will be added here by JavaScript -->
+      </div>
+      
+      <!-- Daily Forecast Section -->
+      <h3 class="section-title">Prévisions à court terme</h3>
+      <div id="dailyForecast" class="daily-grid fade-in">
+        <!-- Daily forecast cards will be added here by JavaScript -->
+      </div>
+    </div>
+  </main>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <i class="fas fa-cloud-sun footer-icon"></i>
+          <span class="font-semibold">Météo App</span>
+        </div>
+        
+        <div class="footer-text">
+          Données fournies par OpenWeatherMap | Créé avec ❤️
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Loading Container (hidden) -->
+  <div id="loaderContainer" class="hidden"></div>
+  
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
